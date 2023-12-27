@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+	  *{
+		  caret-color: transparent;
+	  }
+    body {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh; /* 최소 화면 높이를 100%로 설정 */
+		margin: 0;
+		font-family: Arial, sans-serif;
+    }
+    header {
+		text-align: center;
+		background-color: #f2f2f2; /* 상단에 배경색 추가 */
+		padding: 10px 0; /* 상단에 패딩 추가 */
+		display: flex;
+		align-items: center; /* 수직 중앙 정렬 추가 */
+    }
+
+    ul {
+		list-style: none;
+		display: flex;
+		padding: 0;
+		margin: 0 auto; /* 가운데 정렬을 위해 추가 */
+    }
+
+    li {
+		margin: 0 10px;
+		text-align: center;
+    }
+
+    button {
+		padding: 10px 20px;
+		font-size: 16px;
+		font-weight: bold;
+		border: none;
+		cursor: pointer;
+		border-radius: 5px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+    }
+
+    button:hover {
+		background-color: #3498db;
+		color: #fff;
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    footer {
+		text-align: center;
+		margin-top: auto; /* 나머지 공간을 차지하도록 설정 */
+		background-color: #f2f2f2; /* 하단에 배경색 추가 */
+		padding: 10px 0; /* 하단에 패딩 추가 */
+    }
+
+    footer a {
+		align-items: center;
+		display: block;
+		margin-bottom: 10px;
+		color: #333;
+		text-decoration: none;
+		font-size: 14px;
+    }
+
+    footer a:hover {
+		color: #3498db;
+    }
+
+    nav {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		background-color: rgb(192, 192, 192); /* 네비게이션 영역에 배경색 추가 */
+		padding: 10px;
+    }
+
+    main {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+		padding: 20px;
+    }
+    
+    main.no-align {
+    	align-items: initial; /* 또는 다른 원하는 값으로 설정 */
+  	}
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <ul>
+		<li><button data-page="home">Home</button></li>
+		<li><button data-page="introduction">Introduction</button></li>
+		<li><button data-page="my-photos">My Photos</button></li>
+		<li><button data-page="current-time">Current Time</button></li>
+    </ul>
+  </header>
+
+  <nav>
+    <!-- 네비게이션 내용 -->
+  </nav>
+  <main id="content-container">
+  </main>
+
+  <script>
+  function loadContent(page) {
+    if (page === 'current-time') {
+      // 현재 시간을 얻기 위해 TodayServlet에 요청을 보냄
+      fetch('/aboutme/today')
+        .then(response => response.text())
+        .then(data => {
+          // content-container 내부의 모든 자식 요소를 제거
+          document.getElementById('content-container').innerHTML = '';
+
+          // 가져온 HTML을 content-container에 추가
+          document.getElementById('content-container').innerHTML = data;
+        })
+        .catch(error => console.error('내용 가져오기 오류:', error));
+    } else {
+      // 다른 페이지의 경우
+      fetch(page + '.html')
+        .then(response => response.text())
+        .then(data => {
+          // content-container 내부의 모든 자식 요소를 제거
+          document.getElementById('content-container').innerHTML = '';
+
+          // 가져온 HTML을 content-container에 추가
+          document.getElementById('content-container').innerHTML = data;
+        })
+        .catch(error => console.error('내용 가져오기 오류:', error));
+    }
+  }
+	let intervalId; // 타이머 ID를 저장하기 위한 변수
+    document.querySelector('button[data-page="home"]').addEventListener('click', function() {
+		clearInterval(intervalId); // 이전 타이머 제거
+      	loadContent('home');
+    });
+
+    document.querySelector('button[data-page="introduction"]').addEventListener('click', function() {
+		clearInterval(intervalId); // 이전 타이머 제거
+      	loadContent('aboutme');
+    });
+    document.querySelector('button[data-page="current-time"]').addEventListener('click', function() {
+		clearInterval(intervalId); // 이전 타이머 제거
+		intervalId = setInterval(function() {
+			loadContent('current-time');
+		}, 1000);
+    });
+    // 초기 로드 (기본 뷰에 따라 변경 가능)
+    loadContent('home');
+    // 현재 시간을 1초마다 업데이트
+
+	
+  </script>
+  
+  <footer>
+    <a href="https://blog.naver.com/codingfarm" target="_blank">Visit My Blog on Naver</a>
+    <a href="https://github.com/kkh3868" target="_blank">Visit My GitHub Profile</a>
+  </footer>
+
+</body>
+</html>
